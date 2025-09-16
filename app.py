@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 from models import db, Topic, Skill
 from sqlalchemy import exists
+import uuid
 
 load_dotenv()
 
@@ -140,6 +141,13 @@ def get_skills():
     """
     q = request.args.get("q")
     topic_id = request.args.get("topicId")
+
+    if topic_id:
+        try:
+            uuid.UUID(topic_id)
+        except ValueError:
+            return jsonify({"error": "Invalid topicId format. Must be a valid UUID."}), 400
+
     try:
         limit = min(int(request.args.get("limit", 50)), 200)
         offset = max(int(request.args.get("offset", 0)), 0)
@@ -166,6 +174,11 @@ def get_skill_by_id(id):
     """
     Ruft einen einzelnen Lern-Skill anhand seiner ID ab.
     """
+    try:
+        uuid.UUID(id)
+    except ValueError:
+        return jsonify({"error": "Invalid ID format. Must be a valid UUID."}), 400
+
     skill = Skill.query.get(id)
     if not skill:
         return jsonify({"error": "Skill not found"}), 404
@@ -186,6 +199,11 @@ def create_skill():
         return jsonify({"error": "Field 'name' is required"}), 422
     if not topic_id:
         return jsonify({"error": "Field 'topicID' is required"}), 422
+    
+    try:
+        uuid.UUID(topic_id)
+    except ValueError:
+        return jsonify({"error": "Invalid topicID format. Must be a valid UUID."}), 400
 
     if not Topic.query.get(topic_id):
         return jsonify({"error": "topicID not found"}), 422
@@ -201,6 +219,11 @@ def update_skill(id):
     """
     Aktualisiert einen bestehenden Lern-Skill in der Datenbank.
     """
+    try:
+        uuid.UUID(id)
+    except ValueError:
+        return jsonify({"error": "Invalid ID format. Must be a valid UUID."}), 400
+        
     skill = Skill.query.get(id)
     if not skill:
         return jsonify({"error": "Skill not found"}), 404
@@ -209,6 +232,11 @@ def update_skill(id):
     name = (payload.get("name") or skill.name).strip()
     topic_id = payload.get("topicID", payload.get("topicId", skill.topic_id))
     difficulty = (payload.get("difficulty") or skill.difficulty).strip()
+
+    try:
+        uuid.UUID(topic_id)
+    except ValueError:
+        return jsonify({"error": "Invalid topicID format. Must be a valid UUID."}), 400
 
     if not Topic.query.get(topic_id):
         return jsonify({"error": "topicID not found"}), 422
@@ -225,6 +253,11 @@ def delete_skill(id):
     """
     Löscht einen Lern-Skill aus der Datenbank.
     """
+    try:
+        uuid.UUID(id)
+    except ValueError:
+        return jsonify({"error": "Invalid ID format. Must be a valid UUID."}), 400
+
     skill = Skill.query.get(id)
     if not skill:
         return jsonify({"error": "Skill not found"}), 404
