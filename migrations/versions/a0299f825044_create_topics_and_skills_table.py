@@ -1,8 +1,8 @@
-"""init topics & skills
+"""create topics and skills table
 
-Revision ID: 1ac0a480f3a4
+Revision ID: a0299f825044
 Revises: 
-Create Date: 2025-09-15 13:47:56.779584
+Create Date: 2025-09-25 11:39:57.444058
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1ac0a480f3a4'
+revision = 'a0299f825044'
 down_revision = None
 branch_labels = None
 depends_on = None
